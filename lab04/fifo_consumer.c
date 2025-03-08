@@ -16,6 +16,12 @@ main()
   int num, fd;
 
   /* create a FIFO special file with name FIFO_NAME */
+  if(mkfifo(FIFO_NAME, 0666) == -1){
+    if(errno != EEXIST){
+      perror("mkfifo");
+      exit(1);
+    }
+  }
 
 
   /* open the FIFO file for reading. open() blocks for writers. */
