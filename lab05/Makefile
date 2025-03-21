@@ -1,6 +1,6 @@
 # Defined constants for command base name and arguments for simple test
 #
-STUDENT_ID=XXXXXXX
+STUDENT_ID=3012949
 
 SRCDIR = ./
 CFILELIST = ptcount_mutex.c ptcount_atomic.c

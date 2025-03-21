@@ -8,7 +8,7 @@ typedef struct thread_args {
   int tid;
   int inc;
   int loop;
-} thread_args ;
+} thread_args;
 
 int count = 0;
 pthread_mutex_t count_mutex;
@@ -31,7 +31,11 @@ void *inc_count(void *arg)
      * does their repsective locations have for critical section
      * existence and the need for Critical section protection?
      */
-    count = count + my_args->inc;
+    // count is in the heap. Other threads may interfere it without proper syncing
+    // with the atomic function, count is incremented with atomic hardware instructions
+    // loc is in the stack. Only this thread can affect it.
+    // To increment loc, 3 instructions are needed (load, add, store)
+    __sync_fetch_and_add(&count, my_args->inc); // increment count atomically
     loc = loc + my_args->inc;
   }
   printf("Thread: %d finished. Counted: %d\n", my_args->tid, loc);
@@ -77,6 +81,10 @@ int main(int argc, char *argv[])
     targs->loop = loop;
     targs->inc = inc;
     /* Make call to pthread_create here */
+    if (pthread_create(&threads[i], &attr, inc_count, (void *)targs)) {
+      fprintf(stderr, "Error on create %d\n", i);
+      exit(1);
+    }
   }
 
   /* Wait for all threads to complete using pthread_join.  The threads
@@ -84,6 +92,10 @@ int main(int argc, char *argv[])
    */
   for (i = 0; i < NUM_THREADS; i++) {
     /* Make call to pthread_join here */
+    if (pthread_join(threads[i], NULL)) {
+      fprintf(stderr, "Error on join %d\n", i);
+      exit(1);
+    }
   }
 
   printf ("Main(): Waited on %d threads. Final value of count = %d. Done.\n",
