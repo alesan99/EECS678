@@ -149,11 +149,12 @@ static void *dp_thread(void *arg)
       think_one_thought();
     }
 
+    // Waiter
     pthread_mutex_lock(&waiter);
-    while (!(*left_chop_available(me) || *right_chop_available(me))) {
-      pthread_cond_wait(&Diners[id].can_eat, &waiter);
+    while (!(*left_chop_available(me) && *right_chop_available(me))) { // check if both chopsticks are available
+      pthread_cond_wait(&Diners[id].can_eat, &waiter); // pthread condition variable to wait for when available
     }
-    *left_chop_available(me) = 0;
+    *left_chop_available(me) = 0; // not available
     *right_chop_available(me) = 0;
 
     pthread_mutex_unlock(&waiter);
@@ -174,24 +175,18 @@ static void *dp_thread(void *arg)
     }
 
     /*
-     * Release both chopsticks.
+     * Release both chopsticks: WAITER SOLUTION
      */
     pthread_mutex_unlock(right_chop(me));
     pthread_mutex_unlock(left_chop(me));
 
-    /*
-     * Notify the waiter that chopsticks are now available.
-     */
-    pthread_mutex_lock(&waiter);
+    pthread_mutex_lock(&waiter); // update chopstick availability
 
-    *left_chop_available(me) = 1;
+    *left_chop_available(me) = 1; // available again
     *right_chop_available(me) = 1;
 
-    /*
-     * Release both chopsticks: WAITER SOLUTION
-     */
-    pthread_cond_signal(&left_phil(me)->can_eat);
-    pthread_cond_signal(&right_phil(me)->can_eat);
+    pthread_cond_signal(&left_phil(me)->can_eat); // signal left philosopher to eat if waiting
+    pthread_cond_signal(&right_phil(me)->can_eat); // signal right philosopher to eat if waiting
 
     pthread_mutex_unlock(&waiter);
 

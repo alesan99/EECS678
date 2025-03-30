@@ -152,7 +152,7 @@ static void *dp_thread(void *arg)
     /*
      * Grab both chopsticks: ASYMMETRIC and WAITER SOLUTION
      */
-    if (id%2 == 0) {
+    if (id%2 == 0) { // Alternate which philosopher grabs which chopstick
       pthread_mutex_lock(left_chop(me));
       pthread_mutex_lock(right_chop(me));
     } else {
