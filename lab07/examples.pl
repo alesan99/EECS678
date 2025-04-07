@@ -15,4 +15,4 @@ for $file (<examples/*>){
 	}
 }
 #cleanup
-`rm output1 output2`;
+# `rm output1 output2`;

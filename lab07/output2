@@ -1,7 +1,7 @@
-FINAL TIMING DIAGRAM:
-  Core  0: 00022222334444
-  Core  1: -1111111111---
+  Core  1: -11111111111111111111aaaaaaaaaaaaggggggggggggggg
+  Core  2: --2222266666666666ddeeeeeeecccccccccccccc-------
+  Core  3: ----4444777999999999hhhhhhhhh888888888888888----
 
-Average Waiting Time: 2.40
-Average Turnaround Time: 7.20
-Average Response Time: 2.40
+Average Waiting Time: 5.06
+Average Turnaround Time: 13.94
+Average Response Time: 5.06
